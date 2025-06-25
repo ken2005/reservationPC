@@ -1,0 +1,84 @@
+CREATE TABLE Eleve(
+   Id_Eleve COUNTER,
+   nom VARCHAR(50),
+   prenom VARCHAR(50),
+   PRIMARY KEY(Id_Eleve)
+);
+
+CREATE TABLE Classe(
+   Id_Classe COUNTER,
+   libelle VARCHAR(50),
+   PRIMARY KEY(Id_Classe)
+);
+
+CREATE TABLE Salle(
+   Id_Salle COUNTER,
+   libelle VARCHAR(50),
+   PRIMARY KEY(Id_Salle)
+);
+
+CREATE TABLE Professeur(
+   Id_Professeur COUNTER,
+   nom VARCHAR(50),
+   prenom VARCHAR(50),
+   email VARCHAR(50),
+   PRIMARY KEY(Id_Professeur)
+);
+
+CREATE TABLE Reservation(
+   Id_Reservation COUNTER,
+   r_date DATE,
+   heure_debut TIME,
+   heure_fin TIME,
+   statut VARCHAR(50),
+   motif VARCHAR(250),
+   Id_Professeur INT NOT NULL,
+   Id_Salle INT NOT NULL,
+   PRIMARY KEY(Id_Reservation),
+   FOREIGN KEY(Id_Professeur) REFERENCES Professeur(Id_Professeur),
+   FOREIGN KEY(Id_Salle) REFERENCES Salle(Id_Salle)
+);
+
+CREATE TABLE emplacement(
+   Id_emplacement COUNTER,
+   libelle VARCHAR(50),
+   details VARCHAR(250),
+   PRIMARY KEY(Id_emplacement)
+);
+
+CREATE TABLE PC(
+   Id_PC COUNTER,
+   libelle VARCHAR(50),
+   est_dispo LOGICAL,
+   date_dispo DATE,
+   Id_emplacement INT NOT NULL,
+   PRIMARY KEY(Id_PC),
+   FOREIGN KEY(Id_emplacement) REFERENCES emplacement(Id_emplacement)
+);
+
+CREATE TABLE Ligne_reservation(
+   Id_ligne_reservation COUNTER,
+   Id_PC INT NOT NULL,
+   Id_Eleve INT NOT NULL,
+   Id_Reservation INT NOT NULL,
+   PRIMARY KEY(Id_ligne_reservation),
+   FOREIGN KEY(Id_PC) REFERENCES PC(Id_PC),
+   FOREIGN KEY(Id_Eleve) REFERENCES Eleve(Id_Eleve),
+   FOREIGN KEY(Id_Reservation) REFERENCES Reservation(Id_Reservation)
+);
+
+CREATE TABLE etre_membre(
+   Id_Eleve INT,
+   Id_Classe INT,
+   PRIMARY KEY(Id_Eleve, Id_Classe),
+   FOREIGN KEY(Id_Eleve) REFERENCES Eleve(Id_Eleve),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id_Classe)
+);
+
+CREATE TABLE enseigner(
+   Id_Classe INT,
+   Id_Professeur INT,
+   PRIMARY KEY(Id_Classe, Id_Professeur),
+   FOREIGN KEY(Id_Classe) REFERENCES Classe(Id_Classe),
+   FOREIGN KEY(Id_Professeur) REFERENCES Professeur(Id_Professeur)
+);

@@ -1,0 +1,22 @@
+
+PC (Id_PC, libelle, disponible, date_dispo)
+
+ELEVE (Id_Eleve, nom, prenom)
+
+CLASSE (Id_Classe, libelle)
+
+SALLE (Id_Salle, Libelle)
+
+PROFESSEUR (id, name, prenom, email, email_verified_at, password, remember_token, created_at, updated_at)
+
+RESERVATION (Id_Reservation, r_date, heure_debut, heure_fin, #Id_Salle, #Id_Professeur, statut, motif)
+
+LIGNE_RESERVATION (Id_ligne_reservation, #Id_Reservation, #Id_PC, #Id_Eleve)
+
+ETRE_MEMBRE (#Id_Eleve, #Id_Classe)
+
+ENSEIGNER (#Id_Professeur, #Id_Classe)
+
+PASSWORD_RESET_TOKENS (email, token, created_at)
+
+SESSIONS (id, user_id, ip_address, user_agent, payload, last_activity)
