@@ -55,7 +55,7 @@ Interface dédiée aux administrateurs pour traiter et valider les demandes.
 ![Gestion admin](https://kennan.alwaysdata.net/Portfolio/screens/reservations_en_attentes_admin.png)
 
 ### Interfaces CRUD
-Module d'administration permettant l'ajout manuel ou l'import CSV des données avec export possible.
+Modules d'administration permettant l'ajout manuel ou l'import CSV des données avec export possible.
 
 ![Accueil Backoffice](https://kennan.alwaysdata.net/Portfolio/screens/backoffice_accueil.png)
 ![Gestion des élèves](https://kennan.alwaysdata.net/Portfolio/screens/backoffice_crud.png)
