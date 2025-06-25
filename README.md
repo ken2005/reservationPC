@@ -67,19 +67,56 @@ Interface dédiée aux administrateurs pour traiter et valider les demandes.
 
 ## 🛠️ Technologies Utilisées
 
-- **Interface web** avec formulaires de réservation
-- **Système de notifications** par email
-- **Import/Export** de données CSV
-- **Gestion de base de données** pour le suivi des équipements
+- **Framework** : Laravel 12
+- **Interface dynamique** : Livewire
+- **Base de données** : MySQL
+- **Serveur** : Apache/Nginx
+- **Notifications** : Système d'emails intégré
+- **Import/Export** : Traitement CSV
 
 ## 🚀 Installation
 
-L'application nécessite un serveur web avec support des fonctionnalités suivantes :
-- Base de données pour stocker les réservations
-- Système d'envoi d'emails pour les notifications
-- Support de l'import/export CSV
+### Prérequis
+- PHP 8.1+
+- Composer
+- MySQL 5.7+
+- Serveur web (Apache/Nginx)
 
-Consultez la documentation technique pour les détails d'installation spécifiques à votre environnement.
+### Étapes d'installation
+
+1. **Cloner le repository**
+```bash
+git clone https://github.com/username/reservationpc.git
+cd reservationpc
+```
+
+2. **Installation des dépendances**
+```bash
+composer install
+```
+
+3. **Configuration de l'environnement**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+4. **Configuration de la base de données**
+```bash
+# Configurer .env avec vos paramètres MySQL
+php artisan migrate
+php artisan db:seed
+```
+
+5. **Configuration email**
+```bash
+# Configurer les paramètres SMTP dans .env
+MAIL_MAILER=smtp
+MAIL_HOST=your-smtp-server
+MAIL_PORT=587
+MAIL_USERNAME=your-email
+MAIL_PASSWORD=your-password
+```
 
 ## 💡 Utilisation
 
