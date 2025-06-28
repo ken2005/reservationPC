@@ -24,4 +24,14 @@ class Eleve extends Model
     {
         return $this->hasMany(LigneReservation::class, 'Id_Eleve', 'Id_Eleve');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($eleve) {
+            $eleve->nom = strtoupper($eleve->nom);
+            $eleve->prenom = ucfirst(strtolower($eleve->prenom));
+        });
+    }
 }

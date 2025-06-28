@@ -1,6 +1,21 @@
   @extends('layouts.app')
 
   @section('content')
+  @if(session('success'))
+      <div class="alert alert-success">
+          {{ session('success') }}
+      </div>
+  @endif
+  @if(session('warning'))
+      <div class="alert alert-warning">
+          {{ session('warning') }}
+      </div>
+  @endif
+  @if(session('error'))
+      <div class="alert alert-danger">
+          {{ session('error') }}
+      </div>
+  @endif
   <div class="container">
       <h2 class="card p-2">Gestion des Professeurs</h2>
 
@@ -65,6 +80,7 @@
                           <th>Nom</th>
                           <th>Prénom</th>
                           <th>Email</th>
+                            <th>Mot de passe par défaut</th>
                           <th>Actions</th>
                       </tr>
                   </thead>
@@ -75,12 +91,13 @@
                           <td>{{ $professeur->name }}</td>
                           <td>{{ $professeur->prenom }}</td>
                           <td>{{ $professeur->email }}</td>
+                          <td>{{ $professeur->default_password }}</td>
                           <td>
                               <a href="{{ route('backoffice.professeur.edit', $professeur->id) }}" class="btn btn-warning btn-sm">Modifier</a>
                               <form action="{{ route('backoffice.professeur.destroy', $professeur->id) }}" method="POST" class="d-inline">
                                   @csrf
                                   @method('DELETE')
-                                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce professeur ?')">Supprimer</button>
+                                  <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce professeur ?\n\nATTENTION : Cette action supprimera aussi toutes les réservations et tous les enseignements liés à ce professeur.')">Supprimer</button>
                               </form>
                           </td>
                       </tr>

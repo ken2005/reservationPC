@@ -1,6 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+@if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('warning'))
+    <div class="alert alert-warning">
+        {{ session('warning') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
 <div class="container">
     <h2 class="card p-2">Gestion des Élèves</h2>
 

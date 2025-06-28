@@ -32,14 +32,33 @@ class BackofficeController extends Controller
             'prenom' => $request->prenom,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'default_password' => $request->password, // Stocker le mot de passe en clair pour la réinitialisation
         ]);
 
         return redirect()->back()->with('success', 'Professeur ajouté avec succès');
     }    
     public function destroyProfesseur($id)
     {
+        // Suppression des réservations et lignes associées
+        $reservations = DB::table('reservation')->where('Id_Professeur', $id)->pluck('Id_Reservation');
+        $nbLignesRes = 0;
+        foreach ($reservations as $resId) {
+            $nbLignesRes += DB::table('ligne_reservation')->where('Id_Reservation', $resId)->delete();
+        }
+        $nbReservations = DB::table('reservation')->where('Id_Professeur', $id)->delete();
+        // Suppression des relations dans enseigner
+        $enseignementsSupprimes = DB::table('enseigner')->where('Id_Professeur', $id)->count();
+        DB::table('enseigner')->where('Id_Professeur', $id)->delete();
+        // Suppression du professeur
         \App\Models\User::findOrFail($id)->delete();
-        return redirect()->back()->with('success', 'Professeur supprimé avec succès');
+        $message = 'Professeur supprimé avec succès.';
+        if ($nbReservations > 0) {
+            $message .= ' ' . $nbReservations . ' réservation(s) et ' . $nbLignesRes . ' ligne(s) de réservation supprimées.';
+        }
+        if ($enseignementsSupprimes > 0) {
+            $message .= ' ' . $enseignementsSupprimes . ' ligne(s) supprimée(s) dans les enseignements associées à ce professeur.';
+        }
+        return redirect()->back()->with('success', $message);
     }
 
     public function storeEleve(Request $request)
@@ -261,6 +280,7 @@ public function indexSalles()
 
         if ($request->filled('password')) {
             $professeur->update(['password' => bcrypt($request->password)]);
+            $professeur->update(['default_password' => null]); // Mettre à jour le mot de passe par défaut
         }
 
         return redirect()->route('professeurs.index')->with('success', 'Professeur modifié avec succès');

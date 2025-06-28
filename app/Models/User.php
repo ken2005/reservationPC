@@ -22,6 +22,7 @@ class User extends Authenticatable
         'prenom',
         'email',
         'password',
+        'default_password'
     ];
 
     /**
@@ -48,4 +49,14 @@ class User extends Authenticatable
     }
 
     protected $table = 'professeur';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($user) {
+            $user->name = strtoupper($user->name);
+            $user->prenom = ucfirst(strtolower($user->prenom));
+        });
+    }
 }
