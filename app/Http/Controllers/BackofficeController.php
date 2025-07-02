@@ -24,8 +24,13 @@ class BackofficeController extends Controller
             'name' => 'required|string|max:50',
             'prenom' => 'required|string|max:50',
             'email' => 'required|email|unique:professeur,email',
-            'password' => 'required|string|min:8',
+            'password' => 'nullable|string|min:8',
         ]);
+
+        if (!$request->filled('password')) {
+            // Si le mot de passe n'est pas fourni, générer un mot de passe aléatoire
+            $request->merge(['password' => substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10)]);
+        }
 
         \App\Models\User::create([
             'name' => $request->name,

@@ -41,7 +41,7 @@
                   </div>
                   <div class="form-group">
                       <label for="password">Mot de passe</label>
-                      <input type="password" class="form-control" id="password" name="password" required>
+                      <input type="password" class="form-control" id="password" name="password" >
                   </div>
                   <button type="submit" class="btn btn-primary mt-3">Ajouter</button>
               </form>

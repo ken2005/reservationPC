@@ -24,8 +24,8 @@ class CsvController extends Controller
         foreach ($csvData as $index => $row) {
             $password = isset($row[3]) ? $row[3] : substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 10);
             $batch[] = [
-                'name' => $row[0],
-                'prenom' => $row[1],
+                'name' => strtoupper($row[0]),
+                'prenom' => ucfirst(strtolower($row[1])),
                 'email' => $row[2],
                 'password' => bcrypt($password),
                 'default_password' => $password,

@@ -19,22 +19,35 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" id="reservationsTable">
                     <thead class="bg-light">
                         <tr>
-                            <th>Date</th>
-                            <th>Début</th>
-                            <th>Fin</th>
-                            <th>Salle</th>
                             <th>
-                                <table class="table">
-                                    <thead class="bg-light">
-                                        <tr>
-                                            <th>PC</th>
-                                            <th>Élève</th>
-                                        </tr>
-                                    </thead>
-                                </table>
+                                Date
+                                <input type="date" class="form-control filter-input" data-column="0">
+                            </th>
+                            <th>
+                                Début
+                                <input type="text" class="form-control filter-input" data-column="1" placeholder="Filtrer...">
+                            </th>
+                            <th>
+                                Fin
+                                <input type="text" class="form-control filter-input" data-column="2" placeholder="Filtrer...">
+                            </th>
+                            <th>
+                                Salle
+                                <input type="text" class="form-control filter-input" data-column="3" placeholder="Filtrer...">
+                            </th>
+                            <th>
+                                PC / Élèves
+                                <div class="row">
+                                    <div class="col-6">
+                                        <input type="text" class="form-control filter-input" id="pcFilter" placeholder="Filtrer PC...">
+                                    </div>
+                                    <div class="col-6">
+                                        <input type="text" class="form-control filter-input" id="eleveFilter" placeholder="Filtrer élève...">
+                                    </div>
+                                </div>
                             </th>
                             <th>Actions</th>
                         </tr>
@@ -47,31 +60,41 @@
                             <td>{{ $groupedReservations[0]->heure_fin }}</td>
                             <td>{{ $groupedReservations[0]->Libelle }}</td>
                             <td>
-                                <table class="table table-sm">
+                                <div class="pc-eleves-container">
                                     @foreach($groupedReservations as $reservation)
-                                        <tr>
-                                            <td>{{ $reservation->pc_libelle }}</td>
-                                            <td>{{ $reservation->nom }} {{ $reservation->prenom }}</td>
-                                        </tr>
+                                        <div class="pc-eleve-row">
+                                            <strong>{{ $reservation->pc_libelle }}</strong> - {{ $reservation->nom }} {{ $reservation->prenom }}
+                                        </div>
                                     @endforeach
-                                </table>
+                                </div>
+                                <!-- Données cachées pour le filtrage -->
+                                <span class="d-none eleve-data">
+                                    @foreach($groupedReservations as $reservation)
+                                        {{ $reservation->nom }} {{ $reservation->prenom }} 
+                                    @endforeach
+                                </span>
+                                <span class="d-none pc-data">
+                                    @foreach($groupedReservations as $reservation)
+                                        {{ $reservation->pc_libelle }} 
+                                    @endforeach
+                                </span>
                             </td>
                             <td>
                                 @if (Auth::user()->id == 1)
-                                                                    <form action="{{ route('reservation.validate') }}" method="POST" style="display: inline;" {{ $groupedReservations[0]->statut == 'Validée' ? 'hidden' : '' }}>
-                                                                        @csrf
-                                                                        <input type="hidden" name="reservationId" value="{{ $groupedReservations[0]->Id_Reservation }}">
-                                                                        <button type="submit" class="btn btn-sm btn-success">Valider</button>
-                                                                    </form>
-                                                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#refuseModal" data-reservation-id="{{ $groupedReservations[0]->Id_Reservation }}">Refuser</button>                                @else
-                                    
+                                    <form action="{{ route('reservation.validate') }}" method="POST" style="display: inline;" {{ $groupedReservations[0]->statut == 'Validée' ? 'hidden' : '' }}>
+                                        @csrf
+                                        <input type="hidden" name="reservationId" value="{{ $groupedReservations[0]->Id_Reservation }}">
+                                        <button type="submit" class="btn btn-sm btn-success">Valider</button>
+                                    </form>
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#refuseModal" data-reservation-id="{{ $groupedReservations[0]->Id_Reservation }}">Refuser</button>
+                                @else
                                     <form action="{{ route('reservation.destroy', ['id' => $groupedReservations[0]->Id_Reservation]) }}" method="POST" style="display: inline;">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn btn-sm btn-danger delete-btn">Supprimer</button>
                                     </form>
                                 @endif
-                                </td>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -131,7 +154,38 @@
         font-size: 12px;
         margin: 0 2px;
     }
+
+    .filter-input {
+        width: 100%;
+        margin-top: 5px;
+        font-size: 12px;
+    }
+
+    .pc-eleve-row {
+        margin-bottom: 5px;
+        padding: 2px 5px;
+        background-color: #f8f9fa;
+        border-radius: 3px;
+    }
+
+    .pc-eleves-container {
+        max-height: 150px;
+        overflow-y: auto;
+    }
+
+    /* Style pour les filtres PC/Élève côte à côte */
+    .row {
+        margin: 0;
+    }
+
+    .col-6 {
+        padding: 0 2px;
+    }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -141,6 +195,65 @@ document.addEventListener('DOMContentLoaded', function() {
         var reservationId = button.getAttribute('data-reservation-id');
         document.getElementById('reservationId').value = reservationId;
     });
+
+    // Initialiser DataTables
+    let table = jQuery('#reservationsTable').DataTable({
+        "order": [],
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json"
+        }
+    });
+
+    // Variables pour stocker les valeurs des filtres
+    let pcFilterValue = '';
+    let eleveFilterValue = '';
+
+    // Fonction de filtrage combiné
+    function applyCustomFilters() {
+        jQuery.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+            if (settings.nTable.id !== 'reservationsTable') {
+                return true;
+            }
+            
+            let row = jQuery(table.row(dataIndex).node());
+            let pcData = row.find('.pc-data').text().toLowerCase();
+            let eleveData = row.find('.eleve-data').text().toLowerCase();
+            
+            // Vérifier le filtre PC
+            let pcMatch = !pcFilterValue || pcData.indexOf(pcFilterValue.toLowerCase()) !== -1;
+            
+            // Vérifier le filtre Élève
+            let eleveMatch = !eleveFilterValue || eleveData.indexOf(eleveFilterValue.toLowerCase()) !== -1;
+            
+            return pcMatch && eleveMatch;
+        });
+        
+        table.draw();
+        
+        // Nettoyer le filtre après utilisation
+        jQuery.fn.dataTable.ext.search.pop();
+    }
+
+    // Appliquer les filtres pour les colonnes simples
+    jQuery('.filter-input[data-column]').on('keyup change', function() {
+        let column = jQuery(this).data('column');
+        let value = jQuery(this).val();
+        
+        table.column(column).search(value).draw();
+    });
+
+    // Filtre PC
+    jQuery('#pcFilter').on('keyup', function() {
+        pcFilterValue = jQuery(this).val();
+        applyCustomFilters();
+    });
+
+    // Filtre Élève
+    jQuery('#eleveFilter').on('keyup', function() {
+        eleveFilterValue = jQuery(this).val();
+        applyCustomFilters();
+    });
 });
 </script>
+
 @endsection

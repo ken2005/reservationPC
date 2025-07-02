@@ -55,8 +55,11 @@ class User extends Authenticatable
         parent::boot();
 
         static::creating(function ($user) {
-            $user->name = strtoupper($user->name);
-            $user->prenom = ucfirst(strtolower($user->prenom));
+            $user->name = mb_strtoupper($user->name, 'UTF-8');
+            // Ensure the first letter of prenom is uppercase and the rest are lowercase
+            // This is a more robust way to handle names with special characters
+            $user->prenom = mb_convert_case($user->prenom, MB_CASE_TITLE, 'UTF-8');
+            
         });
     }
 }
